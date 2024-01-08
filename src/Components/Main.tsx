@@ -1,8 +1,11 @@
 import { Button, Container, Input, Select, Textarea } from "@mantine/core"
 import { useState } from "react"
+import * as CryptoJS from 'crypto-js';
+const types = ["XoR","AES"]
 
 const Main = () => {
-  const [type,setType] = useState<string | null>("Шифровать")
+  const [typeOperation,setTypeOperation] = useState<string | null>("Шифровать")
+  const [typeCrypto,setTypeCrypto] = useState<string | null>("XoR")
   const [key,setKey] = useState("")
   const [text,setText] = useState("")
   const [result,setResult] = useState("")
@@ -25,15 +28,56 @@ const Main = () => {
     const res = chaoticEncryptionWithKey(encryptedText, key); // XOR для дешифрации идентичен шифрованию
     setResult(res)
 }
+
+const aesEncrypt = (inputText:string, key:string) =>{
+  const encryptedText = CryptoJS.AES.encrypt(inputText,key).toString()
+  setResult(encryptedText)
+}
+const aesDecrypt = (encryptedText: string, key: string) => {
+
+  const decryptedBytes = CryptoJS.AES.decrypt(encryptedText, key)
+
+  const decryptedText = decryptedBytes.toString(CryptoJS.enc.Utf8)
+  setResult(decryptedText)
+};
+
+  const crypt = ()=>{
+    switch(typeCrypto){
+      case "XoR":
+        chaoticEncryptionWithKey(text,key)
+        break
+      case "AES":
+        aesEncrypt(text,key)
+        break
+    }
+  }
+  const decrypt = ()=>{
+    switch(typeCrypto){
+      case "XoR":
+        console.log(typeCrypto)
+        chaoticDecryptionWithKey(text,key)
+        break
+      case "AES":
+        aesDecrypt(text,key)
+        break
+    }
+  }
   return (
     <main style={{ height: "90vh", display: "flex", alignItems: "center" }}>
       <Container size={"lg"}>
         <div>
         <Select
             allowDeselect={false}
-            onChange={(v)=>setType(v)}
-            value={type}
+            onChange={(v)=>setTypeOperation(v)}
+            value={typeOperation}
             data={['Шифровать','Расшифровать']}
+        />
+        <Select
+            style={{marginTop:"8px"}}
+            allowDeselect={false}
+            onChange={(v)=>setTypeCrypto(v)}
+            value={typeCrypto}
+            data={types}
         />
         </div>
         <div>
@@ -51,9 +95,9 @@ const Main = () => {
         </div>
         <div style={{marginTop:"10px"}}>
             <Button fullWidth onClick={()=>{
-                type == "Шифровать" ? chaoticEncryptionWithKey(text,key):chaoticDecryptionWithKey(text,key)
+                typeOperation == "Шифровать" ? crypt():decrypt()
             }}>
-                {type}
+                {typeOperation}
             </Button>
         </div>
       </Container>

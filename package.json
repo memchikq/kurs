@@ -12,6 +12,8 @@
   "dependencies": {
     "@mantine/core": "^7.3.1",
     "@mantine/hooks": "^7.3.1",
+    "@types/crypto-js": "^4.2.1",
+    "crypto-js": "^4.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
